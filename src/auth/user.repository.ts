@@ -1,36 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { AuthDto } from './dto/auth.dto';
-import { comparePasswordHash, getPasswordHash } from 'src/helpers/password-hesh';
+import { getPasswordHash } from 'src/helpers/password-hesh';
 
 @Injectable()
-export class UserRepository {
-    constructor(
-        @InjectRepository(UserEntity)
-         private readonly userRepository: Repository<UserEntity>,
-    ) {}
+export class UserRepository extends Repository<UserEntity>{
+    constructor(dataSource: DataSource) {
+        super(UserEntity, dataSource.createEntityManager());
+      }
 
     async createAndSaveUser(user: AuthDto): Promise<UserEntity> {
         const password = user.password;
         const passwordHash = await getPasswordHash(password);
-
-        const foundUsers = await this.userRepository.find(
-           { where: {
-                name: user.name,
-                email: user.email,
-            }
-        });
-
-        for (const foundUser of foundUsers) {
-            const res = await comparePasswordHash(password, foundUser.passwordHash);
-            if (res) {
-                throw new BadRequestException('User already exists');
-            }
-        }     
-        
-        const createdUser: Omit<UserEntity, 'id'> = this.userRepository.create({
+    
+        const createdUser: Omit<UserEntity, 'id'> = this.create({
             name: user.name,
             email: user.email,
             passwordHash,
@@ -38,14 +22,14 @@ export class UserRepository {
             updated_at: new Date(),
         });
 
-        return this.userRepository.save(createdUser);
+        return this.save(createdUser);
     }
 
     async login(user: AuthDto): Promise<{success: boolean}> {
         const password = user.password;
         const passwordHash = await getPasswordHash(password);
 
-        const foundUser = await this.userRepository.findOne({
+        const foundUser = await this.findOne({
             where: {
                 name: user.name,
                 email: user.email,
@@ -61,7 +45,7 @@ export class UserRepository {
     }
 
     async getUser(id: string): Promise<UserEntity> {
-        const foundUser = await this.userRepository.findOneBy({id});
+        const foundUser = await this.findOneBy({id});
 
         if (!foundUser) {
             throw new Error('User not found');
@@ -71,17 +55,17 @@ export class UserRepository {
     }
 
     async deleteUser(id: string): Promise<UserEntity> {
-        const foundUser = await this.userRepository.findOneBy({id});
+        const foundUser = await this.findOneBy({id});
 
         if (!foundUser) {
             throw new Error('User not found');
         }
 
-        return this.userRepository.remove(foundUser);
+        return this.remove(foundUser);
     }
 
     async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
-        const foundUser: UserEntity = await this.userRepository.findOneBy({id});
+        const foundUser: UserEntity = await this.findOneBy({id});
 
         if (!foundUser) {
             throw new Error('User not found');
@@ -94,10 +78,6 @@ export class UserRepository {
         }
         foundUser.updated_at = new Date();
 
-        return this.userRepository.save(foundUser);
-    }
-
-    async find(dto: AuthDto): Promise<UserEntity[]> {
-        return await this.userRepository.findBy(dto);
+        return this.save(foundUser);
     }
 }
