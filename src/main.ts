@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { apiLimiter } from './middlewares/express-rete-limit-config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -18,5 +19,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
+
+ // Apply the rate limiting middleware to API calls only
+app.use('/user', apiLimiter)
 }
 bootstrap();
