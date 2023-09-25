@@ -44,16 +44,6 @@ export class UserRepository extends Repository<UserEntity>{
         return {success: true};
     }
 
-    async getUser(id: string): Promise<UserEntity> {
-        const foundUser = await this.findOneBy({id});
-
-        if (!foundUser) {
-            throw new Error('User not found');
-        }
-
-        return foundUser;
-    }
-
     async deleteUser(id: string): Promise<UserEntity> {
         const foundUser = await this.findOneBy({id});
 
