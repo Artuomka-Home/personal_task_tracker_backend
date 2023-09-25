@@ -6,6 +6,8 @@ import { FindUserDto } from './dto/find-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { isStrongPass } from 'src/helpers/validator';
 import { RegisterUserResponse } from './dto/register-user-response';
+import { LoginDto } from './dto/login.dto';
+import { LoginResponse } from './dto/login-response';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -24,8 +26,8 @@ export class UserController {
   @HttpCode(200)
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
-  @ApiResponse({ status: 200 })
-  async login(@Body() dto: AuthDto): Promise<{ success: boolean }> {
+  @ApiResponse({ status: 200 , type: LoginResponse })
+  async login(@Body() dto: LoginDto): Promise<LoginResponse> {
     return await this.userService.login(dto);
   }
 
