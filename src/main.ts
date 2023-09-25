@@ -5,8 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix("api");
+  const app = await NestFactory.create(AppModule, { logger: [ 'log', 'error', 'warn'] });
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
   const swaggerConfig = new DocumentBuilder()
@@ -20,7 +20,7 @@ async function bootstrap() {
 
   await app.listen(3000);
 
- // Apply the rate limiting middleware to API calls only
-app.use('/user', apiLimiter)
+  // Apply the rate limiting middleware to API calls only
+  app.use('/user', apiLimiter);
 }
 bootstrap();

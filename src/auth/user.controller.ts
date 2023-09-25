@@ -29,10 +29,10 @@ export class UserController {
     return await this.userService.login(dto);
   }
 
-  @Get(':id')
+  @Get(':userId')
   @ApiOperation({ summary: 'Get user by id' })
   @ApiResponse({ status: 200, type: RegisterUserResponse })
-  async getUser(@Param('id') id: string): Promise<RegisterUserResponse> {
+  async getUser(@Param('userId') id: string): Promise<RegisterUserResponse> {
     return await this.userService.getUser(id);
   }
 

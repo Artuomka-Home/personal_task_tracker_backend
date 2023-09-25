@@ -27,8 +27,12 @@ export class UserService {
     return await this.userRepository.login(user);
   }
 
-  async getUser(id: string): Promise<UserEntity> {
-    return await this.userRepository.getUser(id);
+  async getUser(id: string): Promise<RegisterUserResponse> {
+    const foundUser = await this.userRepository.findOneBy({ id });
+    if (!foundUser) {
+      throw new Error('User not found');
+    }
+    return buildUserEntityResponse(foundUser);
   }
 
   async deleteUser(id: string): Promise<UserEntity> {
