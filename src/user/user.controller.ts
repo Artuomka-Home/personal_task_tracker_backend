@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthDto } from './dto/auth.dto';
 import { UserEntity } from './user.entity';
@@ -8,6 +8,7 @@ import { isStrongPass } from 'src/helpers/validator';
 import { RegisterUserResponse } from './dto/register-user-response';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -31,6 +32,7 @@ export class UserController {
     return await this.userService.login(dto);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':userId')
   @ApiOperation({ summary: 'Get user by id' })
   @ApiResponse({ status: 200, type: RegisterUserResponse })
