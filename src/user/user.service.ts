@@ -14,14 +14,14 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async register(user: AuthDto): Promise<RegisterUserResponse> {
-    const foundUsers = await this.userRepository.find({
-      where: {
-        name: user.name,
-        email: user.email,
-      },
-    });
-    if (foundUsers.length > 0) {
-      throw new BadRequestException('User already exists');
+    const { name, email } = user;
+    const usersByName = await this.userRepository.findOneBy({ name });
+    if (usersByName) {
+      throw new BadRequestException(`User name: ${name}  already exists`);
+    }
+    const usersByEmail = await this.userRepository.findOneBy({ email });
+    if (usersByEmail) {
+      throw new BadRequestException(`User email: ${email}  already exists`);
     }
 
     try {
