@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './auth/user.module';
-import { UserEntity } from './auth/user.entity';
+import { UserModule } from './user/user.module';
+import { UserEntity } from './user/user.entity';
 import { AppLoggerMiddleware } from './middlewares/logger';
 
 @Module({

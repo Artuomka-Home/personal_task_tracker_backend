@@ -3,6 +3,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { AuthDto } from './dto/auth.dto';
 import { getPasswordHash } from 'src/helpers/password-hesh';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity>{
@@ -23,25 +24,6 @@ export class UserRepository extends Repository<UserEntity>{
         });
 
         return this.save(createdUser);
-    }
-
-    async login(user: AuthDto): Promise<{success: boolean}> {
-        const password = user.password;
-        const passwordHash = await getPasswordHash(password);
-
-        const foundUser = await this.findOne({
-            where: {
-                name: user.name,
-                email: user.email,
-                passwordHash,
-            }
-        });
-
-        if (!foundUser) {
-            throw new Error('User not found');
-        }
-
-        return {success: true};
     }
 
     async deleteUser(id: string): Promise<UserEntity> {
