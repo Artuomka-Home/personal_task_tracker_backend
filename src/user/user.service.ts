@@ -15,13 +15,13 @@ export class UserService {
 
   async register(user: AuthDto): Promise<RegisterUserResponse> {
     const { name, email } = user;
-    const usersByName = await this.userRepository.findOneBy({ name });
-    if (usersByName) {
-      throw new BadRequestException(`User name: ${name}  already exists`);
-    }
-    const usersByEmail = await this.userRepository.findOneBy({ email });
-    if (usersByEmail) {
-      throw new BadRequestException(`User email: ${email}  already exists`);
+    const existingUser = await this.userRepository.findUserByNameOrEmail(name, email);
+    if (existingUser) {
+      if (existingUser.name === name) {
+        throw new BadRequestException(`User name: ${name} already exists`);
+      } else {
+        throw new BadRequestException(`User email: ${email} already exists`);
+      }
     }
 
     try {
