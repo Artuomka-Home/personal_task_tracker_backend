@@ -9,6 +9,7 @@ import { RegisterUserResponse } from './dto/register-user-response';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { UserId } from 'src/decorators/user-id.decorator';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -33,10 +34,10 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get(':userId')
+  @Get()
   @ApiOperation({ summary: 'Get user by id' })
   @ApiResponse({ status: 200, type: RegisterUserResponse })
-  async getUser(@Param('userId') id: string): Promise<RegisterUserResponse> {
+  async getUser(@UserId() id: string): Promise<RegisterUserResponse> {
     return await this.userService.getUser(id);
   }
 
