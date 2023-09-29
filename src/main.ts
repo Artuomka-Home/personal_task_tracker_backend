@@ -1,11 +1,12 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { apiLimiter } from './middlewares/express-rete-limit-config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './helpers/http-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: [ 'log', 'error', 'warn'] });
+  const app = await NestFactory.create(AppModule, { logger: ['log', 'error', 'warn'] });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
@@ -17,6 +18,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
+
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
 
   await app.listen(3000);
 

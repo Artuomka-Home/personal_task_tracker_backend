@@ -28,7 +28,7 @@ export class UserController {
   @HttpCode(200)
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
-  @ApiResponse({ status: 200 , type: LoginResponse })
+  @ApiResponse({ status: 200, type: LoginResponse })
   async login(@Body() dto: LoginDto): Promise<LoginResponse> {
     return await this.userService.login(dto);
   }

@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { UserRepository } from './user.repository';
 import { UserEntity } from './user.entity';
 import { RegisterUserResponse } from './dto/register-user-response';
 import { buildUserEntityResponse } from './utils/user-response-builder';
 import { LoginDto } from './dto/login.dto';
-import { comparePasswordHash, getPasswordHash } from 'src/helpers/password-hesh';
+import { comparePasswordHash } from 'src/helpers/password-hesh';
 import { decodeToken, getJwtToken } from 'src/helpers/jwt';
 import { LoginResponse } from './dto/login-response';
 
@@ -18,9 +18,9 @@ export class UserService {
     const existingUser = await this.userRepository.findUserByNameOrEmail(name, email);
     if (existingUser) {
       if (existingUser.name === name) {
-        throw new BadRequestException(`User name: ${name} already exists`);
+        throw new BadRequestException(`User name ${name} already exists`);
       } else {
-        throw new BadRequestException(`User email: ${email} already exists`);
+        throw new BadRequestException(`User email ${email} already exists`);
       }
     }
 
@@ -43,7 +43,7 @@ export class UserService {
     });
 
     if (!foundUser) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     if (comparePasswordHash(password, foundUser.passwordHash)) {
@@ -55,20 +55,20 @@ export class UserService {
           const expirationDate = new Date(decodedToken.exp * 1000); // Convert the UNIX timestamp to a JavaScript Date object
           return { token: token, exp: expirationDate };
         } else {
-          throw new Error('Invalid token format');
+          throw new BadRequestException('Invalid token format');
         }
       } catch (error) {
         throw new Error('Error decoding token');
       }
     }
 
-    throw new Error('Password is incorrect');
+    throw new BadRequestException('Invalid email or password');
   }
 
   async getUser(id: string): Promise<RegisterUserResponse> {
     const foundUser = await this.userRepository.findOneBy({ id });
     if (!foundUser) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
     return buildUserEntityResponse(foundUser);
   }
