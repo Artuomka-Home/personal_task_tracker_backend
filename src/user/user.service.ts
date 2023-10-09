@@ -5,8 +5,8 @@ import { UserEntity } from './user.entity';
 import { RegisterUserResponse } from './dto/register-user-response';
 import { buildUserEntityResponse } from './utils/user-response-builder';
 import { LoginDto } from './dto/login.dto';
-import { comparePasswordHash } from 'src/helpers/password-hesh';
-import { decodeToken, getJwtToken } from 'src/helpers/jwt';
+import { comparePasswordHash } from '../helpers/password-hash';
+import { decodeToken, getJwtToken } from '../helpers/jwt';
 import { LoginResponse } from './dto/login-response';
 
 @Injectable()
