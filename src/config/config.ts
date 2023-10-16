@@ -2,7 +2,24 @@ import { registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-dotenvConfig({ path: '.env' });
+dotenvConfig({ path: '.test.env' });
+
+export enum ConfigKey {
+  App = 'APP',
+  Db = 'DB',
+}
+
+export enum Environment {
+  Development = 'development',
+  Production = 'production',
+  Testing = 'test',
+}
+
+const APPConfig = registerAs(ConfigKey.App, () => ({
+  env: Environment[process.env.NODE_ENV as keyof typeof Environment] || 'development',
+  port: Number(process.env.APP_PORT),
+  appName: process.env.APP_NAME,
+}));
 
 const config = {
   type: 'postgres',
@@ -21,5 +38,7 @@ const config = {
   synchronize: false,
 };
 
-export default registerAs('typeorm', () => config);
+const DBConfig = registerAs(ConfigKey.Db, () => config);
+
 export const connectionSource = new DataSource(config as DataSourceOptions);
+export const configurations = [APPConfig, DBConfig];

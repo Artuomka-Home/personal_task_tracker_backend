@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { verifyToken } from 'src/helpers/jwt';
+import { verifyToken } from '../helpers/jwt';
 import { Request } from 'express';
 
 @Injectable()
