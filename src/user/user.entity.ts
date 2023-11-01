@@ -14,6 +14,9 @@ export class UserEntity {
     @Column()
     passwordHash: string;
 
+    @Column({ nullable: true })
+    token: string;
+
     @Column()
     created_at: Date;
 

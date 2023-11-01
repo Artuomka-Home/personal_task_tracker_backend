@@ -35,10 +35,10 @@ export class UserService {
   }
 
   async login(user: LoginDto): Promise<LoginResponse> {
-    const password = user.password;
-    const foundUser = await this.userRepository.findOne({
+    const { email, password } = user;
+    let foundUser = await this.userRepository.findOne({
       where: {
-        email: user.email,
+        email: email,
       },
     });
 
@@ -46,12 +46,13 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    if (comparePasswordHash(password, foundUser.passwordHash)) {
+    const { passwordHash } = foundUser;
+    if (comparePasswordHash(password, passwordHash)) {
       const token = getJwtToken(foundUser);
       try {
         const decodedToken = decodeToken(token);
-        //check if the decoded token is an object and if it contains an exp field
         if (decodedToken && typeof decodedToken === 'object' && decodedToken.exp) {
+          foundUser = await this.userRepository.updateUser(foundUser.id, undefined, token);
           const expirationDate = new Date(decodedToken.exp * 1000); // Convert the UNIX timestamp to a JavaScript Date object
           return { token: token, exp: expirationDate };
         } else {
