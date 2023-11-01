@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { AuthDto } from './dto/auth.dto';
-import { getPasswordHash } from 'src/helpers/password-hesh';
+import { getPasswordHash } from '../helpers/password-hash';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {

@@ -4,12 +4,12 @@ import { AuthDto } from './dto/auth.dto';
 import { UserEntity } from './user.entity';
 import { FindUserDto } from './dto/find-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { isStrongPass } from 'src/helpers/validator';
+import { isStrongPass } from '../helpers/validator';
 import { RegisterUserResponse } from './dto/register-user-response';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { UserId } from 'src/decorators/user-id.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { UserId } from '../decorators/user-id.decorator';
 
 @ApiBearerAuth()
 @ApiTags('user')

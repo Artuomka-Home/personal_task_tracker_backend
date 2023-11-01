@@ -5,17 +5,17 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AppLoggerMiddleware } from './middlewares/logger';
-import typeorm from './config/typeorm';
+import { configurations } from './config/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeorm],
+      load: configurations,
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => configService.get('typeorm'),
+      useFactory: async (configService: ConfigService) => configService.get('DB'),
     }),
     UserModule,
   ],
