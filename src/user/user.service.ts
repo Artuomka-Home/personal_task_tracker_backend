@@ -46,13 +46,13 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    const { passwordHash } = foundUser;
+    const { id, passwordHash } = foundUser;
     if (comparePasswordHash(password, passwordHash)) {
       const token = getJwtToken(foundUser);
       try {
         const decodedToken = decodeToken(token);
         if (decodedToken && typeof decodedToken === 'object' && decodedToken.exp) {
-          foundUser = await this.userRepository.updateUser(foundUser.id, undefined, token);
+          foundUser = await this.userRepository.updateUserToken(id, token);
           const expirationDate = new Date(decodedToken.exp * 1000); // Convert the UNIX timestamp to a JavaScript Date object
           return { token: token, exp: expirationDate };
         } else {
@@ -64,6 +64,15 @@ export class UserService {
     }
 
     throw new BadRequestException('Invalid email or password');
+  }
+
+  async logout(id: string): Promise<boolean> {
+    const user = await this.userRepository.updateUserToken(id, '');
+    const { token } = user;
+    if (token) {
+      throw new BadRequestException('Error logging out');
+    }
+    return true;
   }
 
   async getUser(id: string): Promise<RegisterUserResponse> {

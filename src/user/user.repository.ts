@@ -35,7 +35,7 @@ export class UserRepository extends Repository<UserEntity> {
     return this.remove(foundUser);
   }
 
-  async updateUser(id: string, dto?: AuthDto, token?: string): Promise<UserEntity> {
+  async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
     const foundUser: UserEntity = await this.findOneBy({ id });
 
     if (!foundUser) {
@@ -50,11 +50,21 @@ export class UserRepository extends Repository<UserEntity> {
       }
       foundUser.updated_at = new Date();
     }
+    return this.save(foundUser);
+  }
+
+  async updateUserToken(id: string, token: string): Promise<UserEntity> {
+    const foundUser: UserEntity = await this.findOneBy({ id });
+
+    if (!foundUser) {
+      throw new Error('User not found');
+    }
 
     if (token) {
       foundUser.token = token;
+    } else {
+      foundUser.token = null;
     }
-
     return this.save(foundUser);
   }
 

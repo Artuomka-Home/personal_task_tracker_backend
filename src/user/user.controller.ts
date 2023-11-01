@@ -10,6 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { LoginResponse } from './dto/login-response';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserId } from '../decorators/user-id.decorator';
+import { SuccessResponse } from './dto/success-response.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -31,6 +32,16 @@ export class UserController {
   @ApiResponse({ status: 200, type: LoginResponse })
   async login(@Body() dto: LoginDto): Promise<LoginResponse> {
     return await this.userService.login(dto);
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
+  @Post('logout:id')
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, type: SuccessResponse })
+  async logout(@Param('id') id: string): Promise<SuccessResponse> {
+    const res = await this.userService.logout(id);
+    return { success: res };
   }
 
   @UseGuards(AuthGuard)
