@@ -41,6 +41,7 @@ export class UserController {
     return await this.userService.getUser(id);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete user by id' })
   @ApiResponse({ status: 200 })
