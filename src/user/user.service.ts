@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { UserRepository } from './user.repository';
 import { UserEntity } from './user.entity';
@@ -8,6 +8,7 @@ import { LoginDto } from './dto/login.dto';
 import { comparePasswordHash } from '../helpers/password-hash';
 import { decodeToken, getJwtToken } from '../helpers/jwt';
 import { LoginResponse } from './dto/login-response';
+import { errorMessages } from './constants/error-messages';
 
 @Injectable()
 export class UserService {
@@ -18,9 +19,9 @@ export class UserService {
     const existingUser = await this.userRepository.findUserByNameOrEmail(name, email);
     if (existingUser) {
       if (existingUser.name === name) {
-        throw new BadRequestException(`User name ${name} already exists`);
+        throw new BadRequestException(errorMessages.DUPLICATE_NAME(name));
       } else {
-        throw new BadRequestException(`User email ${email} already exists`);
+        throw new BadRequestException(errorMessages.DUPLICATE_EMAIL(email));
       }
     }
 
@@ -43,7 +44,7 @@ export class UserService {
     });
 
     if (!foundUser) {
-      throw new NotFoundException('User not found');
+      throw new HttpException(errorMessages.INVALID_LOGIN_CREDENTIALS, 403);
     }
 
     const { id, passwordHash } = foundUser;
