@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { UserRepository } from './user.repository';
 import { UserEntity } from './user.entity';
@@ -44,7 +44,7 @@ export class UserService {
     });
 
     if (!foundUser) {
-      throw new NotFoundException('User not found');
+      throw new HttpException(errorMessages.INVALID_LOGIN_CREDENTIALS, 403);
     }
 
     if (comparePasswordHash(password, foundUser.passwordHash)) {

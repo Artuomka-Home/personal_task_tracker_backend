@@ -88,7 +88,7 @@ describe('UserController (e2e)', () => {
       .expect(HttpStatus.OK);
   });
 
-  it('should return a 404 status for an invalid user', async () => {
+  it('should return a 403 status for an invalid credentials', async () => {
     const invalidLoginDto = {
       email: 'nonexistent@example.com',
       password: 'invalidPassword',
@@ -97,7 +97,7 @@ describe('UserController (e2e)', () => {
     const response = await request(app.getHttpServer())
       .post('/user/login')
       .send(invalidLoginDto)
-      .expect(HttpStatus.NOT_FOUND);
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it('should return a user when an user is authenticated', async () => {
