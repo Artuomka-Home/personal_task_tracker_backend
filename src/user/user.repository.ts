@@ -53,21 +53,6 @@ export class UserRepository extends Repository<UserEntity> {
     return this.save(foundUser);
   }
 
-  async updateUserToken(id: string, token: string): Promise<UserEntity> {
-    const foundUser: UserEntity = await this.findOneBy({ id });
-
-    if (!foundUser) {
-      throw new Error('User not found');
-    }
-
-    if (token) {
-      foundUser.token = token;
-    } else {
-      foundUser.token = null;
-    }
-    return this.save(foundUser);
-  }
-
   async findUserByNameOrEmail(name: string, email: string): Promise<UserEntity> {
     const existingUser = await this.createQueryBuilder('user')
       .where('user.name = :name OR user.email = :email', { name, email })

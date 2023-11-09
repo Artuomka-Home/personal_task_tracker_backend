@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { UserService } from './user.service';
 import { AuthDto } from './dto/auth.dto';
 import { UserEntity } from './user.entity';
@@ -39,8 +40,10 @@ export class UserController {
   @Post('logout:id')
   @ApiOperation({ summary: 'Logout user' })
   @ApiResponse({ status: 200, type: SuccessResponse })
-  async logout(@Param('id') id: string): Promise<SuccessResponse> {
-    const res = await this.userService.logout(id);
+  async logout(@Req() request: Request, @Param('id') id: string): Promise<SuccessResponse> {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    const accessToken = type === 'Bearer' ? token : undefined;
+    const res = await this.userService.logout(id, accessToken);
     return { success: res };
   }
 
