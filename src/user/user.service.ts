@@ -9,7 +9,7 @@ import { comparePasswordHash } from '../helpers/password-hash';
 import { decodeToken, getJwtToken } from '../helpers/jwt';
 import { LoginResponse } from './dto/login-response';
 import { errorMessages } from './constants/error-messages';
-import { LogoutTokenRepository } from 'src/auth/logout-token.repository';
+import { LogoutTokenRepository } from '../auth/logout-token.repository';
 
 @Injectable()
 export class UserService {
@@ -51,7 +51,7 @@ export class UserService {
       throw new HttpException(errorMessages.INVALID_LOGIN_CREDENTIALS, 403);
     }
 
-    const { id, passwordHash } = foundUser;
+    const { passwordHash } = foundUser;
     if (comparePasswordHash(password, passwordHash)) {
       const token = getJwtToken(foundUser);
       try {
@@ -94,7 +94,12 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<UserEntity> {
-    return await this.userRepository.deleteUser(id);
+    try {
+      return await this.userRepository.deleteUser(id);
+    } catch (error) {
+      throw new Error('Error deleting user');
+    }
+    
   }
 
   async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {

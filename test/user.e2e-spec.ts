@@ -170,12 +170,12 @@ describe('UserController (e2e)', () => {
       .get(`/user`)
       .set('Authorization', `Bearer ${token}`)
       .expect(HttpStatus.UNAUTHORIZED);
-
+      
     // cleanup DB
-    await request(app.getHttpServer()).post('/user/login').send(validLoginDto).expect(HttpStatus.OK);
+    const validToken = getJwtToken(id);
     await request(app.getHttpServer())
       .delete(`/user/${id}`)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${validToken}`)
       .expect(HttpStatus.OK);
   });
 });

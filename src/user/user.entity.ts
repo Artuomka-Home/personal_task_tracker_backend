@@ -1,4 +1,4 @@
-import { LogoutTokenEntity } from 'src/auth/logout-token.entity';
+import { LogoutTokenEntity } from '../auth/logout-token.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -21,6 +21,8 @@ export class UserEntity {
   @Column()
   updated_at: Date;
 
-  @OneToMany(() => LogoutTokenEntity, (token) => token.user)
+  @OneToMany(() => LogoutTokenEntity, (token) => token.user, {
+    cascade: true,
+  })
   tokens: LogoutTokenEntity[];
 }

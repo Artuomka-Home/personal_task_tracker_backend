@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { LogoutTokenEntity } from './logout-token.entity';
-import { UserEntity } from 'src/user/user.entity';
-import { UserRepository } from 'src/user/user.repository';
+import { UserEntity } from '../user/user.entity';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class LogoutTokenRepository extends Repository<LogoutTokenEntity> {
