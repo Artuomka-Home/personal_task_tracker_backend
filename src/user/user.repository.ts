@@ -42,13 +42,14 @@ export class UserRepository extends Repository<UserEntity> {
       throw new Error('User not found');
     }
 
-    foundUser.name = dto.name;
-    foundUser.email = dto.email;
-    if (dto.password) {
-      foundUser.passwordHash = await getPasswordHash(dto.password);
+    if (dto) {
+      foundUser.name = dto.name;
+      foundUser.email = dto.email;
+      if (dto.password) {
+        foundUser.passwordHash = await getPasswordHash(dto.password);
+      }
+      foundUser.updated_at = new Date();
     }
-    foundUser.updated_at = new Date();
-
     return this.save(foundUser);
   }
 

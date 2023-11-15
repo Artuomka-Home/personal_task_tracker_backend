@@ -1,8 +1,9 @@
 import { registerAs } from '@nestjs/config';
 import { config as dotenvConfig } from 'dotenv';
+import { join } from 'path';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-dotenvConfig({ path: '.test.env' });
+dotenvConfig({ path: 'test.env' });
 
 export enum ConfigKey {
   App = 'APP',
@@ -28,7 +29,9 @@ const config = {
   username: `${process.env.DATABASE_USERNAME}`,
   password: `${process.env.DATABASE_PASSWORD}`,
   database: `${process.env.DATABASE_NAME}`,
-  entities: ['dist/**/*.entity{.ts,.js}'],
+  entities:[join(__dirname, '..', '**', '*.entity.{ts,js}')],
+  // migrations: [join(__dirname, '..', '..', 'migrations', '*.{ts,js}')], 
+  // entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
   cli: {

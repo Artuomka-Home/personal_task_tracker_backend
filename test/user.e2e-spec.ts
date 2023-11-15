@@ -140,4 +140,42 @@ describe('UserController (e2e)', () => {
 
     expect(response.body.message).toBe('Unauthorized');
   });
+
+  it('Access token become invalid on logout', async () => {
+    const validUserInput = createValidUserInput();
+    const registerUserResponse = await request(app.getHttpServer())
+      .post('/user/register')
+      .send(validUserInput)
+      .expect(HttpStatus.CREATED);
+    const { id, email } = registerUserResponse.body;
+
+    const validLoginDto = {
+      email: email,
+      password: validUserInput.password,
+    };
+    const loginResponse = await request(app.getHttpServer())
+      .post('/user/login')
+      .send(validLoginDto)
+      .expect(HttpStatus.OK);
+    const { token } = loginResponse.body;
+
+    const response = await request(app.getHttpServer())
+      .post(`/user/logout${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(HttpStatus.OK);
+
+    expect(response.body).toEqual({ success: true });
+
+    const responseLogoutTrue = await request(app.getHttpServer())
+      .get(`/user`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(HttpStatus.UNAUTHORIZED);
+      
+    // cleanup DB
+    const validToken = getJwtToken(id);
+    await request(app.getHttpServer())
+      .delete(`/user/${id}`)
+      .set('Authorization', `Bearer ${validToken}`)
+      .expect(HttpStatus.OK);
+  });
 });

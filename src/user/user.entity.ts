@@ -1,22 +1,28 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { LogoutTokenEntity } from '../auth/logout-token.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class UserEntity {
-    @PrimaryGeneratedColumn()
-    id: string;
-    
-    @Column()
-    name: string;
+  @PrimaryGeneratedColumn()
+  id: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column()
+  name: string;
 
-    @Column()
-    passwordHash: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column()
-    created_at: Date;
+  @Column()
+  passwordHash: string;
 
-    @Column()
-    updated_at: Date;
+  @Column()
+  created_at: Date;
+
+  @Column()
+  updated_at: Date;
+
+  @OneToMany(() => LogoutTokenEntity, (token) => token.user, {
+    cascade: true,
+  })
+  tokens: LogoutTokenEntity[];
 }

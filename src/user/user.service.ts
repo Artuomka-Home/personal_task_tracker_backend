@@ -9,10 +9,14 @@ import { comparePasswordHash } from '../helpers/password-hash';
 import { decodeToken, getJwtToken } from '../helpers/jwt';
 import { LoginResponse } from './dto/login-response';
 import { errorMessages } from './constants/error-messages';
+import { LogoutTokenRepository } from '../auth/logout-token.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly logoutTokenRepository: LogoutTokenRepository,
+  ) {}
 
   async register(user: AuthDto): Promise<RegisterUserResponse> {
     const { name, email } = user;
@@ -36,10 +40,10 @@ export class UserService {
   }
 
   async login(user: LoginDto): Promise<LoginResponse> {
-    const password = user.password;
-    const foundUser = await this.userRepository.findOne({
+    const { email, password } = user;
+    let foundUser = await this.userRepository.findOne({
       where: {
-        email: user.email,
+        email: email,
       },
     });
 
@@ -47,11 +51,11 @@ export class UserService {
       throw new HttpException(errorMessages.INVALID_LOGIN_CREDENTIALS, 403);
     }
 
-    if (comparePasswordHash(password, foundUser.passwordHash)) {
+    const { passwordHash } = foundUser;
+    if (comparePasswordHash(password, passwordHash)) {
       const token = getJwtToken(foundUser);
       try {
         const decodedToken = decodeToken(token);
-        //check if the decoded token is an object and if it contains an exp field
         if (decodedToken && typeof decodedToken === 'object' && decodedToken.exp) {
           const expirationDate = new Date(decodedToken.exp * 1000); // Convert the UNIX timestamp to a JavaScript Date object
           return { token: token, exp: expirationDate };
@@ -66,6 +70,21 @@ export class UserService {
     throw new BadRequestException('Invalid email or password');
   }
 
+  async logout(userId: string, token: string): Promise<boolean> {
+    if (!token) {
+      throw new BadRequestException('Invalid token');
+    }
+    try {
+      const userWithLogoutToken = await this.logoutTokenRepository.saveLogoutToken(userId, token);
+      if (userWithLogoutToken) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      throw new Error('Error saving logout token');
+    }
+  }
+
   async getUser(id: string): Promise<RegisterUserResponse> {
     const foundUser = await this.userRepository.findOneBy({ id });
     if (!foundUser) {
@@ -75,7 +94,12 @@ export class UserService {
   }
 
   async deleteUser(id: string): Promise<UserEntity> {
-    return await this.userRepository.deleteUser(id);
+    try {
+      return await this.userRepository.deleteUser(id);
+    } catch (error) {
+      throw new Error('Error deleting user');
+    }
+    
   }
 
   async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
