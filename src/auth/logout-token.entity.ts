@@ -9,6 +9,9 @@ export class LogoutTokenEntity {
   @Column({ nullable: true })
   token: string;
 
+  @Column()
+  created_at: Date;
+
   @ManyToOne(() => UserEntity, (user) => user.tokens, {
     onDelete: 'CASCADE',
   })

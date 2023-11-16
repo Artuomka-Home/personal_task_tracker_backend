@@ -17,6 +17,7 @@ export class LogoutTokenRepository extends Repository<LogoutTokenEntity> {
     const user = await this.userRepository.findOneBy({ id: userId });
     const logoutToken = new LogoutTokenEntity();
     logoutToken.token = token;
+    logoutToken.created_at = new Date();
     logoutToken.user = user;
     this.manager.save(logoutToken);
     return user;
