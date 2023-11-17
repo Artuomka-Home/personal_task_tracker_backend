@@ -8,6 +8,7 @@ import { AppLoggerMiddleware } from './middlewares/logger';
 import { configurations } from './config/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronJobsModule } from './cron-jobs/cron-jobs.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CronJobsModule } from './cron-jobs/cron-jobs.module';
     UserModule,
     ScheduleModule.forRoot(),
     CronJobsModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
