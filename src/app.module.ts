@@ -9,6 +9,7 @@ import { configurations } from './config/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronJobsModule } from './cron-jobs/cron-jobs.module';
 import { GroupModule } from './group/group.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GroupModule } from './group/group.module';
     ScheduleModule.forRoot(),
     CronJobsModule,
     GroupModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
