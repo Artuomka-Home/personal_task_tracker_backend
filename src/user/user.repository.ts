@@ -25,16 +25,6 @@ export class UserRepository extends Repository<UserEntity> {
     return this.save(createdUser);
   }
 
-  async deleteUser(id: string): Promise<UserEntity> {
-    const foundUser = await this.findOneBy({ id });
-
-    if (!foundUser) {
-      throw new Error('User not found');
-    }
-
-    return this.remove(foundUser);
-  }
-
   async updateUser(user: UserEntity, dto: AuthDto): Promise<UserEntity> {
     if (dto) {
       user.name = dto.name;

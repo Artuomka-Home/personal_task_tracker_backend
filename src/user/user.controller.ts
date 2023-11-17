@@ -56,11 +56,12 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Delete(':id')
+  @Delete()
   @ApiOperation({ summary: 'Delete user by id' })
-  @ApiResponse({ status: 200 })
-  async deleteUser(@Param('id') id: string): Promise<UserEntity> {
-    return await this.userService.deleteUser(id);
+  @ApiResponse({ status: 200, type: SuccessResponse })
+  async deleteUser(@UserId() id: string): Promise<SuccessResponse> {
+    const res = await this.userService.deleteUser(id);
+    return { success: res };
   }
 
   @UseGuards(AuthGuard)

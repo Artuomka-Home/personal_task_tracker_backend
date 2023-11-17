@@ -93,12 +93,16 @@ export class UserService {
     return buildUserEntityResponse(foundUser);
   }
 
-  async deleteUser(id: string): Promise<UserEntity> {
-    try {
-      return await this.userRepository.deleteUser(id);
-    } catch (error) {
-      throw new Error('Error deleting user');
+  async deleteUser(id: string): Promise<boolean> {
+    const foundUser = await this.userRepository.findOneBy({ id });
+    if (!foundUser) {
+      throw new NotFoundException('User not found');
     }
+    const deletedUser = await this.userRepository.remove(foundUser);
+    if (deletedUser) {
+      return true;
+    }
+    return false;
   }
 
   async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
