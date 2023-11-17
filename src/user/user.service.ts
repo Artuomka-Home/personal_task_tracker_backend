@@ -8,7 +8,7 @@ import { LoginDto } from './dto/login.dto';
 import { comparePasswordHash } from '../helpers/password-hash';
 import { decodeToken, getJwtToken } from '../helpers/jwt';
 import { LoginResponse } from './dto/login-response';
-import { errorMessages } from './constants/error-messages';
+import { errorMessages } from '../constants/error-messages';
 import { LogoutTokenRepository } from '../auth/logout-token.repository';
 
 @Injectable()
@@ -99,7 +99,6 @@ export class UserService {
     } catch (error) {
       throw new Error('Error deleting user');
     }
-    
   }
 
   async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {

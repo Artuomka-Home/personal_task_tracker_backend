@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { errorMessages } from '../src/user/constants/error-messages';
+import { errorMessages } from '../src/constants/error-messages';
 import { createValidUserInput } from './faker/user-fake-data';
 import { getJwtToken } from './utils/get-jwt-token';
 
@@ -170,7 +170,7 @@ describe('UserController (e2e)', () => {
       .get(`/user`)
       .set('Authorization', `Bearer ${token}`)
       .expect(HttpStatus.UNAUTHORIZED);
-      
+
     // cleanup DB
     const validToken = getJwtToken(id);
     await request(app.getHttpServer())

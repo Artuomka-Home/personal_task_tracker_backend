@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AppLoggerMiddleware } from './middlewares/logger';
 import { configurations } from './config/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronJobsModule } from './cron-jobs/cron-jobs.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { configurations } from './config/config';
       useFactory: async (configService: ConfigService) => configService.get('DB'),
     }),
     UserModule,
+    ScheduleModule.forRoot(),
+    CronJobsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
