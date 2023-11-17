@@ -59,7 +59,7 @@ describe('UserController (e2e)', () => {
 
     const validToken = getJwtToken(registerUserResponse.id);
     await request(app.getHttpServer())
-      .delete(`/user/${registerUserResponse.id}`)
+      .delete(`/user`)
       .set('Authorization', `Bearer ${validToken}`)
       .expect(HttpStatus.OK);
   });
@@ -83,7 +83,7 @@ describe('UserController (e2e)', () => {
 
     const validToken = getJwtToken(registerResponse.body.id);
     await request(app.getHttpServer())
-      .delete(`/user/${registerResponse.body.id}`)
+      .delete(`/user`)
       .set('Authorization', `Bearer ${validToken}`)
       .expect(HttpStatus.OK);
   });
@@ -125,7 +125,7 @@ describe('UserController (e2e)', () => {
     expect(response.body).toEqual(expectedUser);
 
     await request(app.getHttpServer())
-      .delete(`/user/${expectedUser.id}`)
+      .delete(`/user`)
       .set('Authorization', `Bearer ${validToken}`)
       .expect(HttpStatus.OK);
   });
@@ -174,8 +174,103 @@ describe('UserController (e2e)', () => {
     // cleanup DB
     const validToken = getJwtToken(id);
     await request(app.getHttpServer())
-      .delete(`/user/${id}`)
+      .delete(`/user`)
       .set('Authorization', `Bearer ${validToken}`)
       .expect(HttpStatus.OK);
+  });
+
+  it('should return 200 when an user is deleted', async () => {
+    const validUserInput = createValidUserInput();
+    const registerUserResponse = await request(app.getHttpServer())
+      .post('/user/register')
+      .send(validUserInput)
+      .expect(HttpStatus.CREATED);
+    const { email } = registerUserResponse.body;
+
+    const validLoginDto = {
+      email: email,
+      password: validUserInput.password,
+    };
+    const loginResponse = await request(app.getHttpServer())
+      .post('/user/login')
+      .send(validLoginDto)
+      .expect(HttpStatus.OK);
+    const { token } = loginResponse.body;
+
+    const response = await request(app.getHttpServer())
+      .delete(`/user`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(HttpStatus.OK);
+
+    expect(response.body).toEqual({ success: true });
+  });
+
+  it('should return user with updated name', async () => {
+    const validUserInput = createValidUserInput();
+    const registerUserResponse = await request(app.getHttpServer())
+      .post('/user/register')
+      .send(validUserInput)
+      .expect(HttpStatus.CREATED);
+    const { id, email } = registerUserResponse.body;
+
+    const validLoginDto = {
+      email: email,
+      password: validUserInput.password,
+    };
+    const loginResponse = await request(app.getHttpServer())
+      .post('/user/login')
+      .send(validLoginDto)
+      .expect(HttpStatus.OK);
+    const { token } = loginResponse.body;
+
+    const updatedName = 'updatedName';
+    const response = await request(app.getHttpServer())
+      .patch(`/user`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: updatedName })
+      .expect(HttpStatus.OK);
+
+    expect(response.body.name).toEqual(updatedName);
+
+    const validToken = getJwtToken(id);
+    await request(app.getHttpServer())
+      .delete(`/user`)
+      .set('Authorization', `Bearer ${validToken}`)
+      .expect(HttpStatus.OK);
+  });
+
+  it('should return 400 when an user is updated with existing email ', async () => {
+    const validUserInput1 = createValidUserInput();
+    const registerUserResponse1 = await request(app.getHttpServer())
+      .post('/user/register')
+      .send(validUserInput1)
+      .expect(HttpStatus.CREATED);
+    const { email } = registerUserResponse1.body;
+
+    const validLoginDto1 = {
+      email: email,
+      password: validUserInput1.password,
+    };
+
+    const validUserInput2 = createValidUserInput();
+    const registerUserResponse2 = await request(app.getHttpServer())
+      .post('/user/register')
+      .send(validUserInput2)
+      .expect(HttpStatus.CREATED);
+
+    const existingEmail = registerUserResponse2.body.email;
+
+    const loginResponse = await request(app.getHttpServer())
+      .post('/user/login')
+      .send(validLoginDto1)
+      .expect(HttpStatus.OK);
+
+    const { token } = loginResponse.body;
+
+    const response = await request(app.getHttpServer())
+      .patch(`/user`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ email: existingEmail })
+      .expect(HttpStatus.BAD_REQUEST);
   });
 });
