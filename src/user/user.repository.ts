@@ -35,22 +35,16 @@ export class UserRepository extends Repository<UserEntity> {
     return this.remove(foundUser);
   }
 
-  async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
-    const foundUser: UserEntity = await this.findOneBy({ id });
-
-    if (!foundUser) {
-      throw new Error('User not found');
-    }
-
+  async updateUser(user: UserEntity, dto: AuthDto): Promise<UserEntity> {
     if (dto) {
-      foundUser.name = dto.name;
-      foundUser.email = dto.email;
+      user.name = dto.name;
+      user.email = dto.email;
       if (dto.password) {
-        foundUser.passwordHash = await getPasswordHash(dto.password);
+        user.passwordHash = await getPasswordHash(dto.password);
       }
-      foundUser.updated_at = new Date();
+      user.updated_at = new Date();
     }
-    return this.save(foundUser);
+    return this.save(user);
   }
 
   async findUserByNameOrEmail(name: string, email: string): Promise<UserEntity> {

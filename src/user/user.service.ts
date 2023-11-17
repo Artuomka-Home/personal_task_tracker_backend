@@ -102,6 +102,15 @@ export class UserService {
   }
 
   async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
-    return await this.userRepository.updateUser(id, dto);
+    const foundUser = await this.userRepository.findOneBy({ id });
+    if (!foundUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    try {
+      return await this.userRepository.updateUser(foundUser, dto);
+    } catch (error) {
+      throw new BadRequestException(errorMessages.DUPLICATE_EMAIL(dto.email));
+    }
   }
 }

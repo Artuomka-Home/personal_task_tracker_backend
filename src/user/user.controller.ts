@@ -63,10 +63,11 @@ export class UserController {
     return await this.userService.deleteUser(id);
   }
 
-  @Patch(':id')
+  @UseGuards(AuthGuard)
+  @Patch()
   @ApiOperation({ summary: 'Update user by id' })
   @ApiResponse({ status: 200, type: UserEntity })
-  async updateUser(@Param('id') id: string, @Body() dto: AuthDto): Promise<UserEntity> {
+  async updateUser(@UserId() id: string, @Body() dto: AuthDto): Promise<UserEntity> {
     return await this.userService.updateUser(id, dto);
   }
 
