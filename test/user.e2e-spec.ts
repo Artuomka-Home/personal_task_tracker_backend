@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { errorMessages } from '../src/constants/error-messages';
+import { errorMessages } from '../src/common/constants/error-messages';
 import { createValidUserInput } from './faker/user-fake-data';
 import { getJwtToken } from './utils/get-jwt-token';
 

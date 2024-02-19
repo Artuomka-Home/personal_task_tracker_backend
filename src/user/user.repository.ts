@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { AuthDto } from './dto/auth.dto';
-import { getPasswordHash } from '../helpers/password-hash';
+import { getPasswordHash } from '../common/helpers/password-hash';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -14,7 +14,7 @@ export class UserRepository extends Repository<UserEntity> {
     const password = user.password;
     const passwordHash = await getPasswordHash(password);
 
-    const createdUser: Omit<UserEntity, 'id'> = this.create({
+    const createdUser = this.create({
       name: user.name,
       email: user.email,
       passwordHash,

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { LogoutTokenRepository } from '../auth/logout-token.repository';
-import { errorMessages } from '../constants/error-messages';
+import { errorMessages } from '../common/constants/error-messages';
 
 @Injectable()
 export class CronJobsService {

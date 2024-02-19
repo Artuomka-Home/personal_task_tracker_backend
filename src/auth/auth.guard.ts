@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
-import { verifyToken } from '../helpers/jwt';
+import { verifyToken } from '../common/helpers/jwt';
 import { Request } from 'express';
 import { LogoutTokenRepository } from './logout-token.repository';
 

@@ -1,4 +1,4 @@
-import { UserEntity } from '../user.entity';
+import { UserEntity } from '../../entities/user.entity';
 import { RegisterUserResponse } from '../dto/register-user-response';
 
 export function buildUserEntityResponse(user: UserEntity): RegisterUserResponse {

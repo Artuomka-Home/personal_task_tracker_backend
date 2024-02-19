@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GroupRepository } from './group.repository';
-import { GroupEntity } from './group.entity';
+import { GroupEntity } from '../entities/group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 
 @Injectable()

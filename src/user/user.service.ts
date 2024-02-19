@@ -1,14 +1,14 @@
 import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { UserRepository } from './user.repository';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { RegisterUserResponse } from './dto/register-user-response';
 import { buildUserEntityResponse } from './utils/user-response-builder';
 import { LoginDto } from './dto/login.dto';
-import { comparePasswordHash } from '../helpers/password-hash';
-import { decodeToken, getJwtToken } from '../helpers/jwt';
+import { comparePasswordHash } from '../common/helpers/password-hash';
+import { decodeToken, getJwtToken } from '../common/helpers/jwt';
 import { LoginResponse } from './dto/login-response';
-import { errorMessages } from '../constants/error-messages';
+import { errorMessages } from '../common/constants/error-messages';
 import { LogoutTokenRepository } from '../auth/logout-token.repository';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class UserService {
 
   async login(user: LoginDto): Promise<LoginResponse> {
     const { email, password } = user;
-    let foundUser = await this.userRepository.findOne({
+    const foundUser = await this.userRepository.findOne({
       where: {
         email: email,
       },
