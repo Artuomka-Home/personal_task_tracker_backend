@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { ProjectEntity } from './project.entity';
+import { ProjectEntity } from '../entities/project.entity';
 import { ProjectDto } from './dto/create-project.dto';
 
 @Injectable()
@@ -13,6 +13,8 @@ export class ProjectRepository extends Repository<ProjectEntity> {
     const createdProject = this.create({
       title: dto.title,
       description: dto.description,
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     return this.save(createdProject);

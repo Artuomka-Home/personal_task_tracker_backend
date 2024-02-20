@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GroupService } from './group.service';
-import { GroupEntity } from './group.entity';
+import { GroupEntity } from '../entities/group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 
 @ApiBearerAuth()

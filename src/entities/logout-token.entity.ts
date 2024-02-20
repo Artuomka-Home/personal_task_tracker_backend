@@ -1,7 +1,7 @@
-import { UserEntity } from '../user/user.entity';
+import { UserEntity } from './user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'logout_token'})
+@Entity({ name: 'logout_token' })
 export class LogoutTokenEntity {
   @PrimaryGeneratedColumn()
   id: string;

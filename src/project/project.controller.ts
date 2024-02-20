@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { ProjectDto } from './dto/create-project.dto';
-import { ProjectEntity } from './project.entity';
+import { ProjectEntity } from '../entities/project.entity';
 
 @ApiBearerAuth()
 @ApiTags('project')

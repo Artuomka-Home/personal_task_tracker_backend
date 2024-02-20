@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { LogoutTokenEntity } from './logout-token.entity';
-import { UserEntity } from '../user/user.entity';
+import { LogoutTokenEntity } from '../entities/logout-token.entity';
+import { UserEntity } from '../entities/user.entity';
 import { UserRepository } from '../user/user.repository';
 
 @Injectable()

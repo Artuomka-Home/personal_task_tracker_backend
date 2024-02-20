@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { UserEntity } from 'src/user/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 export function getJwtToken(user: UserEntity): string {
   const payload = {
@@ -22,5 +22,5 @@ export function verifyToken(token: string): any {
 }
 
 export function decodeToken(token: string): any {
-    return jwt.decode(token);
+  return jwt.decode(token);
 }

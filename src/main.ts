@@ -1,9 +1,9 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { apiLimiter } from './middlewares/express-rete-limit-config';
+import { apiLimiter } from './common/middlewares/express-rete-limit-config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AllExceptionsFilter } from './helpers/http-exception.filter';
+import { AllExceptionsFilter } from './common/helpers/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ['log', 'error', 'warn'] });

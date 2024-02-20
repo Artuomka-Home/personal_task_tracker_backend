@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { AuthDto } from './dto/auth.dto';
-import { getPasswordHash } from '../helpers/password-hash';
+import { getPasswordHash } from '../common/helpers/password-hash';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { GroupEntity } from '../entities/group.entity';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -14,7 +16,7 @@ export class UserRepository extends Repository<UserEntity> {
     const password = user.password;
     const passwordHash = await getPasswordHash(password);
 
-    const createdUser: Omit<UserEntity, 'id'> = this.create({
+    const createdUser = this.create({
       name: user.name,
       email: user.email,
       passwordHash,
@@ -25,12 +27,16 @@ export class UserRepository extends Repository<UserEntity> {
     return this.save(createdUser);
   }
 
-  async updateUser(user: UserEntity, dto: AuthDto): Promise<UserEntity> {
+  async updateUser(user: UserEntity, dto: UpdateUserDto, existingGroups?: GroupEntity[]): Promise<UserEntity> {
+    const { name, email, password } = dto;
     if (dto) {
-      user.name = dto.name;
-      user.email = dto.email;
-      if (dto.password) {
-        user.passwordHash = await getPasswordHash(dto.password);
+      user.name = name;
+      user.email = email;
+      if (password) {
+        user.passwordHash = await getPasswordHash(password);
+      }
+      if (existingGroups){
+        user.groups = existingGroups;
       }
       user.updated_at = new Date();
     }
