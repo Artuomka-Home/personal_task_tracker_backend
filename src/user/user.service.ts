@@ -10,12 +10,15 @@ import { decodeToken, getJwtToken } from '../common/helpers/jwt';
 import { LoginResponse } from './dto/login-response';
 import { errorMessages } from '../common/constants/error-messages';
 import { LogoutTokenRepository } from '../auth/logout-token.repository';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { GroupRepository } from '../group/group.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly logoutTokenRepository: LogoutTokenRepository,
+    private readonly groupRepository: GroupRepository,
   ) {}
 
   async register(user: AuthDto): Promise<RegisterUserResponse> {
@@ -105,14 +108,27 @@ export class UserService {
     return false;
   }
 
-  async updateUser(id: string, dto: AuthDto): Promise<UserEntity> {
+  async updateUser(id: string, dto: UpdateUserDto): Promise<UserEntity> {
+    const { groups } = dto;
+    const existingGroups = [];
     const foundUser = await this.userRepository.findOneBy({ id });
     if (!foundUser) {
       throw new NotFoundException('User not found');
     }
 
+    if (groups) {
+      groups.map(async (groupId) => {
+        const group = await this.groupRepository.findOneBy({ id: groupId });
+        if (!group) {
+          throw new BadRequestException('Group not found');
+        } else {
+          existingGroups.push(group);
+        }
+      });
+    }
+
     try {
-      return await this.userRepository.updateUser(foundUser, dto);
+      return await this.userRepository.updateUser(foundUser, dto, existingGroups);
     } catch (error) {
       throw new BadRequestException(errorMessages.DUPLICATE_EMAIL(dto.email));
     }

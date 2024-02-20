@@ -11,6 +11,7 @@ import { LoginResponse } from './dto/login-response';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserId } from '../common/decorators/user-id.decorator';
 import { SuccessResponse } from './dto/success-response.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiBearerAuth()
 @ApiTags('user')
@@ -67,7 +68,7 @@ export class UserController {
   @Patch()
   @ApiOperation({ summary: 'Update user by id' })
   @ApiResponse({ status: 200, type: UserEntity })
-  async updateUser(@UserId() id: string, @Body() dto: AuthDto): Promise<UserEntity> {
+  async updateUser(@UserId() id: string, @Body() dto: UpdateUserDto): Promise<UserEntity> {
     return await this.userService.updateUser(id, dto);
   }
 }

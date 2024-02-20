@@ -4,7 +4,7 @@ import BaseAbstractModel from './common/base.abstract.model';
 import { Entity, Column, ManyToMany, JoinTable } from 'typeorm';
 import { GroupEntity } from './group.entity';
 
-@Entity()
+@Entity({ name: 'permissions'})
 export class PermissionEntity extends BaseAbstractModel {
   @Column({ type: 'enum', enum: AccessLevel, default: AccessLevel.NONE })
   accessLevel: AccessLevel;
